@@ -1,3 +1,4 @@
+const { hashPassword } = require('../../../utils/password');
 const usersRepository = require('./users-repository');
 
 async function getUsers() {
@@ -25,6 +26,10 @@ async function deleteUser(id) {
   return usersRepository.deleteUser(id);
 }
 
+async function changePassword(id, password) {
+  return usersRepository.changePassword(id, hashPassword)
+}
+
 module.exports = {
   getUsers,
   getUser,
@@ -32,4 +37,5 @@ module.exports = {
   createUser,
   updateUser,
   deleteUser,
+  changePassword
 };
