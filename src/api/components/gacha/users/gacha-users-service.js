@@ -1,37 +1,35 @@
-const { hashPassword } = require('../../../utils/password');
-const gachaUsersRepository = require('./gacha-users-repository').default;
+const { hashPassword } = require('../../../../utils/password');
+const gachaUsersRepository = require('./gacha-users-repository');
 
-async function getUsers() {
-  return gachaUsersRepository.getUsers();
+async function getGachaUsers() {
+  return gachaUsersRepository.getGachaUsers();
 }
 
-async function getUser(id) {
-  return gachaUsersRepository.getUser(id);
+async function getGachaUser(id) {
+  return gachaUsersRepository.getGachaUser(id);
 }
 
 async function emailExists(email) {
-  const users = await gachaUsersRepository.getUsersByEmail(email);
+  const users = await gachaUsersRepository.getGachaUsersByEmail(email);
   return !!users;
 }
 
-async function createUsers(email, password, fullName) {
-  return gachaUsersRepository.createUsers(email, password, fullName);
+async function createGachaUsers(email, password, fullName) {
+  const hashedPassword = await hashPassword(password);
+  return gachaUsersRepository.createGachaUsers(email, hashedPassword, fullName);
 }
 
-async function updateUsers(id, email, fullName) {
-  return gachaUsersRepository.updateUsers(id, email, fullName);
+async function updateGachaUsers(id, email, fullName) {
+  return gachaUsersRepository.updateGachaUsers(id, email, fullName);
 }
 
-async function deleteUsers(id) {
-  return gachaUsersRepository.deleteUsers(id);
+async function deleteGachaUsers(id) {
+  return gachaUsersRepository.deleteGachaUsers(id);
 }
 
 async function changePassword(id, password) {
-  return gachaUsersRepository.changePassword(id, hashPassword);
-}
-
-async function getPrizes() {
-  return gachaPrizesRepository.getPrizes();
+  const hashedPassword = await hashPassword(password);
+  return gachaUsersRepository.changePassword(id, hashedPassword);
 }
 
 async function checkLimit(email) {
@@ -42,18 +40,19 @@ async function saveRoll(data) {
   return gachaUsersRepository.createGachaHistory(data);
 }
 
-async function rollGacha(id) {}
-
-async function getHistory() {
-  return gachaUsersRepository.getHistory(fullName, description);
+async function getHistory(email) {
+  return gachaUsersRepository.getHistory(email);
 }
 
 module.exports = {
-  getUsers,
-  getUser,
+  getGachaUsers,
+  getGachaUser,
   emailExists,
-  createUsers,
-  updateUsers,
-  deleteUsers,
+  createGachaUsers,
+  updateGachaUsers,
+  deleteGachaUsers,
   changePassword,
+  checkLimit,
+  saveRoll,
+  getHistory,
 };

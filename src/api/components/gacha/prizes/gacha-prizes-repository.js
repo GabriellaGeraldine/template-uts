@@ -11,11 +11,9 @@ async function updateKuota(id) {
   const prize = await Prize.findOne({ _id: id });
 
   if (prize) {
-    const kuotaKeluarBaru = (prize.kuota_keluar || 0) + 1;
-
+    const kuotaKeluarBaru = (prize.kuotaKeluar || 0) + 1;
     return Prize.updateOne({ _id: id }, { $set: { kuota: kuotaKeluarBaru } });
   }
-
   return null;
 }
 

@@ -4,6 +4,6 @@ module.exports = (db) =>
     db.Schema({
       fullName: String,
       description: String,
-      status: String
+      status: String,
     })
   );

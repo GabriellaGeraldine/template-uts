@@ -1,12 +1,12 @@
 const gachaPrizesRepository = require('../prizes/gacha-prizes-repository');
-const gachaUsersRepository = require('./gacha-users-repository').default;
-const gachaUsersService = require('./gacha-users-repository').default;
-const { errorResponder, errorTypes } = require('../../../../core/errors');
-const { hashPassword } = require('../../../../utils/password');
+const gachaUsersService = require('./gacha-users-service');
 
-async function getUsers(request, response, next) {
+const { errorResponder, errorTypes } = require('../../../../core/errors');
+const { hashPassword, passwordMatched } = require('../../../../utils/password');
+
+async function getGachaUsers(request, response, next) {
   try {
-    const users = await gachaUsersService.getUsers();
+    const users = await gachaUsersService.getGachaUsers();
 
     return response.status(200).json(users);
   } catch (error) {
@@ -14,9 +14,9 @@ async function getUsers(request, response, next) {
   }
 }
 
-async function getUser(request, response, next) {
+async function getGachaUser(request, response, next) {
   try {
-    const user = await gachaUsersService.getUser(request.params.id);
+    const user = await gachaUsersService.getGachaUser(request.params.id);
 
     if (!user) {
       throw errorResponder(errorTypes.UNPROCESSABLE_ENTITY, 'User not found');
@@ -28,7 +28,7 @@ async function getUser(request, response, next) {
   }
 }
 
-async function createUser(request, response, next) {
+async function createGachaUser(request, response, next) {
   try {
     const {
       email,
@@ -71,7 +71,7 @@ async function createUser(request, response, next) {
 
     const hashedPassword = await hashPassword(password);
 
-    const success = await gachaUsersService.createUser(
+    const success = await gachaUsersService.createGachaUser(
       email,
       hashedPassword,
       fullName
@@ -90,7 +90,7 @@ async function createUser(request, response, next) {
   }
 }
 
-async function updateUser(request, response, next) {
+async function updateGachaUser(request, response, next) {
   try {
     const { email, full_name: fullName } = request.body;
 
@@ -110,7 +110,6 @@ async function updateUser(request, response, next) {
       );
     }
 
-    // Email must be unique, if it is changed
     if (email !== user.email && (await gachaUsersService.emailExists(email))) {
       throw errorResponder(
         errorTypes.EMAIL_ALREADY_TAKEN,
@@ -118,7 +117,7 @@ async function updateUser(request, response, next) {
       );
     }
 
-    const success = await gachaUsersService.updateUser(
+    const success = await gachaUsersService.updateGachaUser(
       request.params.id,
       email,
       fullName
@@ -146,7 +145,7 @@ async function changePassword(request, response, next) {
       confirm_new_password: confirmNewPassword,
     } = request.body;
 
-    const user = await gachaUsersService.getUser(id);
+    const user = await gachaUsersService.getGachaUser(id);
     if (!user) {
       throw errorResponder(errorTypes.UNPROCESSABLE_ENTITY, 'User not found');
     }
@@ -201,9 +200,9 @@ async function changePassword(request, response, next) {
   }
 }
 
-async function deleteUser(request, response, next) {
+async function deleteGachaUser(request, response, next) {
   try {
-    const success = await gachaUsersService.deleteUser(request.params.id);
+    const success = await gachaUsersService.deleteGachaUser(request.params.id);
 
     if (!success) {
       throw errorResponder(
@@ -218,56 +217,60 @@ async function deleteUser(request, response, next) {
   }
 }
 
-async function rollGacha(request, response) {
+async function rollGacha(request, response, next) {
   try {
     const { id } = request.params;
 
-    const user = await gachaUsersService.getUserByiD(id);
-    if (!user) return response.status(400).json({ message: 'TIDAK TERSEDIA' });
+    const user = await gachaUsersService.getGachaUser(id);
+    if (!user) {
+      return next(
+        errorResponder(errorTypes.UNPROCESSABLE_ENTITY, 'TIDAK TERSEDIA')
+      );
+    }
 
-    const countToday = await gachaUsersService.countGachaToday(user.email);
+    const countToday = await gachaUsersService.checkLimit(user.email);
     if (countToday >= 5) {
-      return response
-        .status(400)
-        .json({ message: 'Mencapai limit 5x per hari' });
+      return next(errorResponder(403, 'Mencapai limit 5x per hari'));
     }
 
     const prizes = await gachaPrizesRepository.getPrizes();
-    const availablePrizes = prizes.filter((p) => p.kuota - p.kuota_keluar > 0);
+    const availablePrizes = prizes.filter((p) => p.kuota - p.kuotaKeluar > 0);
 
     if (availablePrizes.length === 0) {
-      return response.status(404).json({ message: 'Maaf, hadiah telah habis' });
+      return next(errorResponder(404, 'Maaf, hadiah telah habis'));
     }
 
     const wonPrize =
       availablePrizes[Math.floor(Math.random() * availablePrizes.length)];
 
-    await gachaPrizesRepository.updateKuota(wonPrize._id);
+    const { _id: prizeId, nama: prizeNama } = wonPrize;
+    await gachaPrizesRepository.updateKuota(prizeId);
 
-    const history = await gachaUsersService.saveGachaHistory({
+    const history = await gachaUsersService.saveRoll({
       userEmail: user.email,
       userNama: user.fullNama,
-      prizeNama: wonPrize.nama,
-      status: wonPrize.name.toLowerCase().includes('kurang berutung')
+      prizeNama,
+      status: prizeNama.toLowerCase().includes('kurang beruntung')
         ? 'lose'
         : 'win',
     });
 
-    response.status(200).json({
+    return response.status(200).json({
+      success: true,
       status: ' Gacha SUKSES',
       data: history,
     });
   } catch (error) {
-    response.status(500).json({ status: 'error', message: error.message });
+    return next(error);
   }
 }
 
 module.exports = {
-  getUsers,
-  getUser,
-  createUser,
-  updateUser,
+  getGachaUsers,
+  getGachaUser,
+  createGachaUser,
+  updateGachaUser,
   changePassword,
-  deleteUser,
+  deleteGachaUser,
   rollGacha,
 };

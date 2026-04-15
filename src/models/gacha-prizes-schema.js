@@ -10,7 +10,7 @@ module.exports = (db) =>
         type: Number,
         required: true,
       },
-      kuota_keluar: {
+      kuotaKeluar: {
         type: Number,
         default: 0,
       },

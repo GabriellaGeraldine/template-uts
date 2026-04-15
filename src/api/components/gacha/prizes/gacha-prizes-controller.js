@@ -1,11 +1,11 @@
-const PrizeRepository = require('./gacha-prizes-repository');
-const userRepository = require('../users/gacha-users-repository').default;
+const prizesService = require('./gacha-prizes-service');
+const gachaUsersRepository = require('../users/gacha-users-repository');
+const errorResponder = require('../../../../core/errors');
 
-async function playGacha(request, response) {
+async function playGacha(request, response, next) {
   try {
     const { userId } = request.body;
-
-    const prizes = await PrizeRepository.getPrizes();
+    const prizes = await prizesService.getPrizes();
 
     const availablePrizes = prizes.filter((p) => {
       const keluar = p.kuota_keluar || 0;
@@ -13,43 +13,31 @@ async function playGacha(request, response) {
     });
 
     if (availablePrizes.length === 0) {
-      return response.status(404).json({
-        message: 'Maaf, hadiah sudah habis!',
-      });
+      throw errorResponder(404, 'Maaf, hadiah sudah habis');
     }
 
     const randomIndex = Math.floor(Math.random() * availablePrizes.length);
     const wonPrize = availablePrizes[randomIndex];
 
-    if (!wonPrize) {
-      return response
-        .status(400)
-        .json({ message: ' Gagal mendapatkan hadiah' });
-    }
+    const { _id: prizeId, nama: prizeName, kuota, kuotaKeluar } = wonPrize;
 
-    const { _id: id, nama, kuota, kuota_keluar } = wonPrize;
-
-    await PrizeRepository.updateKuota(id);
+    await prizesService.updateKuota(prizeId);
 
     if (userId) {
-      await userRepository.addGachaHistory(userId, wonPrize.nama);
+      await gachaUsersRepository.addGachaHistory(userId, prizeName);
     }
 
     return response.status(200).json({
       success: true,
       message: 'Gacha SUKSES',
       data: {
-        id,
-        name: wonPrize.nama,
-        remainingKuota: wonPrize.kuota - ((wonPrize.kuota_keluar || 0) + 1),
+        id: prizeId,
+        nama: wonPrize.nama,
+        remainingKuota: kuota - ((wonPrize.kuota_keluar || 0) + 1),
       },
     });
   } catch (error) {
-    return response.status(500).json({
-      success: false,
-      message: 'Internal Server Error',
-      error: error.message,
-    });
+    return next(error);
   }
 }
 
