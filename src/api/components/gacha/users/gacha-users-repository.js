@@ -44,6 +44,10 @@ async function countGachaToday(email) {
   });
 }
 
+async function getAllHistory() {
+  return gachaHistorySchema.find({}).sort({ createdAt: -1 });
+}
+
 async function updateGachaUser(id, email, fullName) {
   return GachaUser.updateOne({ _id: id }, { $set: { email, fullName } });
 }
@@ -64,6 +68,7 @@ module.exports = {
   createGachaHistory,
   getHistoryByEmail,
   countGachaToday,
+  getAllHistory,
   updateGachaUser,
   changePassword,
   deleteGachaUser,

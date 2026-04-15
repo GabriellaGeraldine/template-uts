@@ -265,6 +265,40 @@ async function rollGacha(request, response, next) {
   }
 }
 
+function maskName(nama) {
+  return nama
+    .split('')
+    .map((word) => {
+      if (word.length <= 2) return '*'.repeat(word.length);
+      const first = word[0];
+      const last = word[word.length - 1];
+      const middle = '*'.repeat(word.length - 2);
+      return `${first}${middle}${last}`;
+    })
+    .join('');
+}
+
+async function getWinners(request, response, next) {
+  try {
+    const history = await gachaUsersService.getHistoryAll();
+
+    const winners = history
+      .filter((h) => h.status === 'win')
+      .map((h) => ({
+        namaSamaran: maskName(h.userNama),
+        hadiah: h.prizeName,
+        tanggal: h.createdAt,
+      }));
+
+    return response.status(200).json({
+      success: true,
+      data: winners,
+    });
+  } catch (error) {
+    return next(error);
+  }
+}
+
 module.exports = {
   getGachaUsers,
   getGachaUser,
@@ -273,4 +307,6 @@ module.exports = {
   changePassword,
   deleteGachaUser,
   rollGacha,
+  maskName,
+  getWinners,
 };

@@ -7,4 +7,6 @@ module.exports = (app) => {
   app.use('gacha/prizes', router);
 
   router.post('/roll', gachaPrizesController.playGacha);
+
+  router.get('/status', gachaPrizesController.getPrizesStatus);
 };

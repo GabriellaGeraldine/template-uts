@@ -32,9 +32,29 @@ async function playGacha(request, response, next) {
       message: 'Gacha SUKSES',
       data: {
         id: prizeId,
-        nama: wonPrize.nama,
-        remainingKuota: kuota - ((wonPrize.kuota_keluar || 0) + 1),
+        nama: prizeName,
+        remainingKuota: kuota - ((kuotaKeluar || 0) + 1),
       },
+    });
+  } catch (error) {
+    return next(error);
+  }
+}
+
+async function getPrizesStatus(request, response, next) {
+  try {
+    const prizes = await prizesService.getPrizes();
+
+    const data = prizes.map((p) => ({
+      nama: p.nama,
+      kuotaTotal: p.kuota,
+      kuotaTerpakai: p.kuotaKeluar || 0,
+      sisaKuota: p.kuota - (p.kuotaKeluar || 0),
+    }));
+
+    return response.status(200).json({
+      success: true,
+      data,
     });
   } catch (error) {
     return next(error);
@@ -43,4 +63,5 @@ async function playGacha(request, response, next) {
 
 module.exports = {
   playGacha,
+  getPrizesStatus,
 };

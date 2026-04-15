@@ -11,6 +11,8 @@ module.exports = (app) => {
 
   route.post('/', gachaUsersController.createGachaUser);
 
+  route.get('/winners', gachaUsersController.getWinners);
+
   route.post(':id/roll', gachaUsersController.rollGacha);
 
   route.get('/:id/history', gachaUsersController.getHistory);

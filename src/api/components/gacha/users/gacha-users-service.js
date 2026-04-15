@@ -44,6 +44,10 @@ async function getHistory(email) {
   return gachaUsersRepository.getHistory(email);
 }
 
+async function getAllHistory() {
+  return gachaUsersRepository.getAllHistory();
+}
+
 module.exports = {
   getGachaUsers,
   getGachaUser,
@@ -55,4 +59,5 @@ module.exports = {
   checkLimit,
   saveRoll,
   getHistory,
+  getAllHistory,
 };
