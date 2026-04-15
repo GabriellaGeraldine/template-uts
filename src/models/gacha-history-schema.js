@@ -1,8 +1,9 @@
 module.exports = (db) =>
   db.model(
-    'History'
+    'History',
     db.Schema({
       fullName: String,
-      description: String
+      description: String,
+      status: String
     })
   );

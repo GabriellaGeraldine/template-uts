@@ -1,16 +1,18 @@
 module.exports = (db) =>
   db.model(
-    'Prizes'
+    'Prizes',
     db.Schema({
       nama: {
         type: String,
-        required: true
+        required: true,
       },
       kuota: {
         type: Number,
-        required: true;
-        min: 0
-      } 
+        required: true,
+      },
+      kuota_keluar: {
+        type: Number,
+        default: 0,
+      },
     })
   );
-

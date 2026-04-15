@@ -1,9 +1,9 @@
 module.exports = (db) =>
   db.model(
-    'Users',
+    'gachaUsers',
     db.Schema({
       email: String,
       password: String,
-      fullName: String
+      fullName: String,
     })
   );
