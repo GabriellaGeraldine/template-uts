@@ -1,9 +1,6 @@
-const mongoose = require('mongoose');
-const gachaUsersSchema = require('../../../../models/gacha-users-schema');
-const gachaHistorySchema = require('../../../../models/gacha-history-schema');
+const models = require('../../../../models');
 
-const GachaUser = gachaUsersSchema(mongoose);
-const GachaHistory = gachaHistorySchema(mongoose);
+const { GachaUser, GachaHistory } = models;
 
 async function getGachaUsers() {
   return GachaUser.find({});
@@ -45,7 +42,7 @@ async function countGachaToday(email) {
 }
 
 async function getAllHistory() {
-  return gachaHistorySchema.find({}).sort({ createdAt: -1 });
+  return GachaHistory.find({}).sort({ createdAt: -1 });
 }
 
 async function updateGachaUser(id, email, fullName) {

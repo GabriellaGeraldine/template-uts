@@ -1,18 +1,15 @@
-const mongoose = require('mongoose');
-const gachaPrizeSchema = require('../../../../models/gacha-prizes-schema');
-
-const Prize = gachaPrizeSchema(mongoose);
+const { Prizes } = require('../../../../models');
 
 async function getPrizes() {
-  return Prize.find({});
+  return Prizes.find({});
 }
 
 async function updateKuota(id) {
-  const prize = await Prize.findOne({ _id: id });
+  const prize = await Prizes.findOne({ _id: id });
 
   if (prize) {
     const kuotaKeluarBaru = (prize.kuotaKeluar || 0) + 1;
-    return Prize.updateOne({ _id: id }, { $set: { kuota: kuotaKeluarBaru } });
+    return Prizes.updateOne({ _id: id }, { $set: { kuota: kuotaKeluarBaru } });
   }
   return null;
 }
