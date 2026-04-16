@@ -136,6 +136,23 @@ async function updateGachaUser(request, response, next) {
   }
 }
 
+async function deleteGachaUser(request, response, next) {
+  try {
+    const success = await gachaUsersService.deleteGachaUser(request.params.id);
+
+    if (!success) {
+      throw errorResponder(
+        errorTypes.UNPROCESSABLE_ENTITY,
+        'Failed to delete user'
+      );
+    }
+
+    return response.status(200).json({ message: 'User deleted successfully' });
+  } catch (error) {
+    return next(error);
+  }
+}
+
 async function changePassword(request, response, next) {
   try {
     const { id } = request.params;
@@ -195,23 +212,6 @@ async function changePassword(request, response, next) {
     return response
       .status(200)
       .json({ message: 'Successfully changed user password' });
-  } catch (error) {
-    return next(error);
-  }
-}
-
-async function deleteGachaUser(request, response, next) {
-  try {
-    const success = await gachaUsersService.deleteGachaUser(request.params.id);
-
-    if (!success) {
-      throw errorResponder(
-        errorTypes.UNPROCESSABLE_ENTITY,
-        'Failed to delete user'
-      );
-    }
-
-    return response.status(200).json({ message: 'User deleted successfully' });
   } catch (error) {
     return next(error);
   }
@@ -299,14 +299,37 @@ async function getWinners(request, response, next) {
   }
 }
 
+async function getHistory(request, response, next) {
+  try {
+    const { email } = request.params;
+    const history = await gachaUsersService.getHistory(email);
+
+    return response.status(200).json(history);
+  } catch (error) {
+    return next(error);
+  }
+}
+
+async function getAllHistory(request, response, next) {
+  try {
+    const allHistory = await gachaUsersService.getAllHistory();
+
+    return response.status(200).json(allHistory);
+  } catch (error) {
+    return next(error);
+  }
+}
+
 module.exports = {
   getGachaUsers,
   getGachaUser,
   createGachaUser,
   updateGachaUser,
-  changePassword,
   deleteGachaUser,
+  changePassword,
   rollGacha,
-  maskName,
   getWinners,
+  getHistory,
+  getAllHistory,
+  maskName,
 };

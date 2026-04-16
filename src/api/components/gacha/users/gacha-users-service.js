@@ -14,30 +14,22 @@ async function emailExists(email) {
   return !!users;
 }
 
-async function createGachaUsers(email, password, fullName) {
+async function createGachaUser(email, password, fullName) {
   const hashedPassword = await hashPassword(password);
   return gachaUsersRepository.createGachaUsers(email, hashedPassword, fullName);
 }
 
-async function updateGachaUsers(id, email, fullName) {
+async function updateGachaUser(id, email, fullName) {
   return gachaUsersRepository.updateGachaUsers(id, email, fullName);
 }
 
-async function deleteGachaUsers(id) {
+async function deleteGachaUser(id) {
   return gachaUsersRepository.deleteGachaUsers(id);
 }
 
 async function changePassword(id, password) {
   const hashedPassword = await hashPassword(password);
   return gachaUsersRepository.changePassword(id, hashedPassword);
-}
-
-async function checkLimit(email) {
-  return gachaUsersRepository.countGachaToday(email);
-}
-
-async function saveRoll(data) {
-  return gachaUsersRepository.createGachaHistory(data);
 }
 
 async function getHistory(email) {
@@ -52,12 +44,10 @@ module.exports = {
   getGachaUsers,
   getGachaUser,
   emailExists,
-  createGachaUsers,
-  updateGachaUsers,
-  deleteGachaUsers,
+  createGachaUser,
+  updateGachaUser,
+  deleteGachaUser,
   changePassword,
-  checkLimit,
-  saveRoll,
   getHistory,
   getAllHistory,
 };

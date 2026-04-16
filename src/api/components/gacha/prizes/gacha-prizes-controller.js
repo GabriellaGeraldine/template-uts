@@ -1,6 +1,6 @@
 const prizesService = require('./gacha-prizes-service');
 const gachaUsersRepository = require('../users/gacha-users-repository');
-const errorResponder = require('../../../../core/errors');
+const { errorResponder, errorTypes } = require('../../../../core/errors');
 
 async function playGacha(request, response, next) {
   try {
@@ -13,7 +13,9 @@ async function playGacha(request, response, next) {
     });
 
     if (availablePrizes.length === 0) {
-      throw errorResponder(404, 'Maaf, hadiah sudah habis');
+      return next(
+        errorResponder(errorTypes.NOT_FOUND, 'Maaf, hadiah sudah habis')
+      );
     }
 
     const randomIndex = Math.floor(Math.random() * availablePrizes.length);
