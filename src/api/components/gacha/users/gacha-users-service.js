@@ -10,21 +10,21 @@ async function getGachaUser(id) {
 }
 
 async function emailExists(email) {
-  const users = await gachaUsersRepository.getGachaUsersByEmail(email);
+  const users = await gachaUsersRepository.getGachaUserByEmail(email);
   return !!users;
 }
 
 async function createGachaUser(email, password, fullName) {
   const hashedPassword = await hashPassword(password);
-  return gachaUsersRepository.createGachaUsers(email, hashedPassword, fullName);
+  return gachaUsersRepository.createGachaUser(email, hashedPassword, fullName);
 }
 
 async function updateGachaUser(id, email, fullName) {
-  return gachaUsersRepository.updateGachaUsers(id, email, fullName);
+  return gachaUsersRepository.updateGachaUser(id, email, fullName);
 }
 
 async function deleteGachaUser(id) {
-  return gachaUsersRepository.deleteGachaUsers(id);
+  return gachaUsersRepository.deleteGachaUser(id);
 }
 
 async function changePassword(id, password) {

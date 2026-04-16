@@ -1,6 +1,8 @@
 const models = require('../../../../models');
 
-const { GachaUser, GachaHistory } = models;
+const GachaUser = models.gachaUsers;
+
+const GachaHistory = models.gachaHistory;
 
 async function getGachaUsers() {
   return GachaUser.find({});

@@ -1,29 +1,29 @@
 const express = require('express');
 
-const gachaUsersController = require('./gacha-users-controller');
+const gachaUsers = require('./gacha-users-controller');
 
 const route = express.Router();
 
 module.exports = (app) => {
-  app.use('/api/gacha/users', route);
+  app.use('/gacha/users', route);
 
-  route.get('/', gachaUsersController.getGachaUsers);
+  route.get('/', gachaUsers.getGachaUsers);
 
-  route.get('/winners', gachaUsersController.getWinners);
+  route.get('/winners', gachaUsers.getWinners);
 
-  route.get('/all-history', gachaUsersController.getAllHistory);
+  route.get('/all-history', gachaUsers.getAllHistory);
 
-  route.get('/history/:email', gachaUsersController.getHistory);
+  route.get('/history/:email', gachaUsers.getHistory);
 
-  route.get('/:id', gachaUsersController.getGachaUser);
+  route.get('/:id', gachaUsers.getGachaUser);
 
-  route.post('/', gachaUsersController.createGachaUser);
+  route.post('/', gachaUsers.createGachaUser);
 
-  route.post('/roll/:id', gachaUsersController.rollGacha);
+  route.post('/roll/:id', gachaUsers.rollGacha);
 
-  route.put('/:id', gachaUsersController.updateGachaUser);
+  route.put('/:id', gachaUsers.updateGachaUser);
 
-  route.put('/:id/change-password', gachaUsersController.changePassword);
+  route.put('/:id/change-password', gachaUsers.changePassword);
 
-  route.delete('/:id', gachaUsersController.deleteGachaUser);
+  route.delete('/:id', gachaUsers.deleteGachaUser);
 };
