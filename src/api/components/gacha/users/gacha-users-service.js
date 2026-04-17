@@ -32,12 +32,20 @@ async function changePassword(id, password) {
   return gachaUsersRepository.changePassword(id, hashedPassword);
 }
 
-async function getHistory(email) {
-  return gachaUsersRepository.getHistory(email);
+async function checkLimit(email) {
+  return gachaUsersRepository.countHistoryToday(email);
+}
+
+async function getHistoryByEmail(email) {
+  return gachaUsersRepository.getHistoryByEmail(email);
 }
 
 async function getAllHistory() {
   return gachaUsersRepository.getAllHistory();
+}
+
+async function saveRoll(data) {
+  return gachaUsersRepository.saveRollHistory(data);
 }
 
 module.exports = {
@@ -48,6 +56,8 @@ module.exports = {
   updateGachaUser,
   deleteGachaUser,
   changePassword,
-  getHistory,
+  checkLimit,
+  getHistoryByEmail,
   getAllHistory,
+  saveRoll,
 };

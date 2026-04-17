@@ -32,24 +32,15 @@ async function deleteGachaUser(id) {
   return GachaUser.deleteOne({ _id: id });
 }
 
-async function createGachaHistory(data) {
-  return GachaHistory.create({
-    userEmail: data.userEmail,
-    userName: data.userName,
-    prizeName: data.prizeName,
-    status: data.status,
-  });
-}
-
-async function getHistory(email) {
-  return GachaHistory.find({ userEmail: email });
+async function getHistoryByEmail(email) {
+  return GachaHistory.find({ userEmail: email }).sort({ createdAt: -1 });
 }
 
 async function getAllHistory() {
   return GachaHistory.find({}).sort({ createdAt: -1 });
 }
 
-async function countGachaToday(email) {
+async function countHistoryToday(email) {
   const startOfDay = new Date();
   startOfDay.setHours(0, 0, 0, 0);
 
@@ -57,6 +48,10 @@ async function countGachaToday(email) {
     userEmail: email,
     createdAt: { $gte: startOfDay },
   });
+}
+
+async function saveRoll(data) {
+  return GachaHistory.create(data);
 }
 
 module.exports = {
@@ -67,8 +62,8 @@ module.exports = {
   updateGachaUser,
   changePassword,
   deleteGachaUser,
-  createGachaHistory,
-  getHistory,
+  getHistoryByEmail,
   getAllHistory,
-  countGachaToday,
+  countHistoryToday,
+  saveRoll,
 };

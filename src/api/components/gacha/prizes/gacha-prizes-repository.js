@@ -5,15 +5,12 @@ async function getPrizes() {
 }
 
 async function updateKuota(id) {
-  const prize = await Prizes.findOne({ _id: id });
-
-  if (prize) {
-    const kuotaKeluarBaru = (prize.kuotaKeluar || 0) + 1;
-    return Prizes.updateOne({ _id: id }, { $set: { kuota: kuotaKeluarBaru } });
-  }
-  return null;
+  return Prizes.findByIdAndUpdate(
+    id,
+    { $inc: { kuotaKeluar: 1 } },
+    { new: true }
+  );
 }
-
 module.exports = {
   getPrizes,
   updateKuota,

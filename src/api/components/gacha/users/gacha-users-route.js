@@ -11,15 +11,15 @@ module.exports = (app) => {
 
   route.get('/winners', gachaUsers.getWinners);
 
-  route.get('/all-history', gachaUsers.getAllHistory);
+  // route.get('/all-history', gachaUsers.getAllHistory);
 
-  route.get('/history/:email', gachaUsers.getHistory);
+  // route.get('/history/:email', gachaUsers.getHistory);
 
   route.get('/:id', gachaUsers.getGachaUser);
 
   route.post('/', gachaUsers.createGachaUser);
 
-  route.post('/roll/:id', gachaUsers.rollGacha);
+  // route.post('/roll/:id', gachaUsers.rollGacha);
 
   route.put('/:id', gachaUsers.updateGachaUser);
 

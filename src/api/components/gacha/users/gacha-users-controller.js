@@ -1,4 +1,3 @@
-const gachaPrizesRepository = require('../prizes/gacha-prizes-repository');
 const gachaUsersService = require('./gacha-users-service');
 
 const { errorResponder, errorTypes } = require('../../../../core/errors');
@@ -217,54 +216,6 @@ async function changePassword(request, response, next) {
   }
 }
 
-async function rollGacha(request, response, next) {
-  try {
-    const { id } = request.params;
-
-    const user = await gachaUsersService.getGachaUser(id);
-    if (!user) {
-      return next(
-        errorResponder(errorTypes.UNPROCESSABLE_ENTITY, 'TIDAK TERSEDIA')
-      );
-    }
-
-    const countToday = await gachaUsersService.checkLimit(user.email);
-    if (countToday >= 5) {
-      return next(errorResponder(403, 'Mencapai limit 5x per hari'));
-    }
-
-    const prizes = await gachaPrizesRepository.getPrizes();
-    const availablePrizes = prizes.filter((p) => p.kuota - p.kuotaKeluar > 0);
-
-    if (availablePrizes.length === 0) {
-      return next(errorResponder(404, 'Maaf, hadiah telah habis'));
-    }
-
-    const wonPrize =
-      availablePrizes[Math.floor(Math.random() * availablePrizes.length)];
-
-    const { _id: prizeId, nama: prizeNama } = wonPrize;
-    await gachaPrizesRepository.updateKuota(prizeId);
-
-    const history = await gachaUsersService.saveRoll({
-      userEmail: user.email,
-      userNama: user.fullNama,
-      prizeNama,
-      status: prizeNama.toLowerCase().includes('kurang beruntung')
-        ? 'lose'
-        : 'win',
-    });
-
-    return response.status(200).json({
-      success: true,
-      status: ' Gacha SUKSES',
-      data: history,
-    });
-  } catch (error) {
-    return next(error);
-  }
-}
-
 function maskName(nama) {
   return nama
     .split('')
@@ -299,27 +250,6 @@ async function getWinners(request, response, next) {
   }
 }
 
-async function getHistory(request, response, next) {
-  try {
-    const { email } = request.params;
-    const history = await gachaUsersService.getHistory(email);
-
-    return response.status(200).json(history);
-  } catch (error) {
-    return next(error);
-  }
-}
-
-async function getAllHistory(request, response, next) {
-  try {
-    const allHistory = await gachaUsersService.getAllHistory();
-
-    return response.status(200).json(allHistory);
-  } catch (error) {
-    return next(error);
-  }
-}
-
 module.exports = {
   getGachaUsers,
   getGachaUser,
@@ -327,9 +257,6 @@ module.exports = {
   updateGachaUser,
   deleteGachaUser,
   changePassword,
-  rollGacha,
   getWinners,
-  getHistory,
-  getAllHistory,
   maskName,
 };
