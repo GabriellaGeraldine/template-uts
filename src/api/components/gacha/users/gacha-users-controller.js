@@ -216,22 +216,25 @@ async function changePassword(request, response, next) {
   }
 }
 
-function maskName(nama) {
-  return nama
-    .split('')
-    .map((word) => {
-      if (word.length <= 2) return '*'.repeat(word.length);
-      const first = word[0];
-      const last = word[word.length - 1];
-      const middle = '*'.repeat(word.length - 2);
-      return `${first}${middle}${last}`;
-    })
-    .join('');
+function maskName(fullName) {
+  const words = fullName.split(' ');
+
+  const maskedWords = words.map((word) => {
+    if (word.length <= 2) return word;
+
+    const firstLetter = word[0];
+    const lastLetter = word[word.length - 1];
+    const middleStars = '*'.repeat(word.length - 2);
+
+    return firstLetter + middleStars + lastLetter;
+  });
+
+  return maskedWords.join(' ');
 }
 
 async function getWinners(request, response, next) {
   try {
-    const history = await gachaUsersService.getHistoryAll();
+    const history = await gachaUsersService.getAllHistory();
 
     const winners = history
       .filter((h) => h.status === 'win')

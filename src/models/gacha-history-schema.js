@@ -1,9 +1,13 @@
 module.exports = (db) =>
   db.model(
-    'History',
-    db.Schema({
-      fullName: String,
-      description: String,
-      status: String,
-    })
+    'gachaHistory',
+    db.Schema(
+      {
+        userEmail: String,
+        userNama: String,
+        prizeNama: String,
+        status: String,
+      },
+      { timestamps: true }
+    )
   );

@@ -6,11 +6,11 @@ module.exports = (db) =>
         type: String,
         required: true,
       },
-      kuota: {
+      kuotaTotal: {
         type: Number,
         required: true,
       },
-      kuotaKeluar: {
+      kuotaTerpakai: {
         type: Number,
         default: 0,
       },

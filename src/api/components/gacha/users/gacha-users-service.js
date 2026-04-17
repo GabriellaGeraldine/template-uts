@@ -45,7 +45,7 @@ async function getAllHistory() {
 }
 
 async function saveRoll(data) {
-  return gachaUsersRepository.saveRollHistory(data);
+  return gachaUsersRepository.saveRoll(data);
 }
 
 module.exports = {

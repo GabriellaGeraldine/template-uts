@@ -15,12 +15,16 @@ const seedDB = async () => {
     console.log('Succesfully connected');
 
     const prizeList = [
-      { nama: 'Emas 10 gram', kuota: 1, kuota_keluar: 0 },
-      { nama: 'Smartphone X', kuota: 5, kuota_keluar: 0 },
-      { nama: 'Smartwatch Y', kuota: 10, kuota_keluar: 0 },
-      { nama: 'Voucher Rp. 100.000', kuota: 100, kuota_keluar: 0 },
-      { nama: 'Pulsa Rp. 50.000', kuota: 500, kuota_keluar: 0 },
-      { nama: 'Maaf, anda kurang beruntung', kuota: 5000, kuota_keluar: 0 },
+      { nama: 'Emas 10 gram', kuotaTotal: 1, kuotaTerpakai: 0 },
+      { nama: 'Smartphone X', kuotaTotal: 5, kuotaTerpakai: 0 },
+      { nama: 'Smartwatch Y', kuotaTotal: 10, kuotaTerpakai: 0 },
+      { nama: 'Voucher Rp. 100.000', kuotaTotal: 100, kuotaTerpakai: 0 },
+      { nama: 'Pulsa Rp. 50.000', kuotaTotal: 500, kuotaTerpakai: 0 },
+      {
+        nama: 'Maaf, anda kurang beruntung',
+        kuotaTotal: 5000,
+        kuotaTerpakai: 0,
+      },
     ];
 
     await Prize.deleteMany({});
